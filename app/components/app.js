@@ -1,11 +1,19 @@
-var React = require('react')
+import React from 'react';
+import _ from 'lodash';
 
 class App extends React.Component {
+  todos() {
+    return _.map(this.props.store.todos, (toDo, index) => {
+      return (<li key={index}>{toDo}</li>);
+    });
+
+  }
+
   render() {
     return (
-      <div>
-        Hello React
-      </div>
+      <ul>
+        {this.todos()}
+      </ul>
     );
   }
 }

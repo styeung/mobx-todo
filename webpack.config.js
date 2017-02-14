@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
   context: __dirname + '/app',
   entry: './index.js',
@@ -8,6 +10,12 @@ module.exports = {
      libraryTarget: 'var',
      library: 'Todo',
   },
+  resolve: {
+    modules: [
+      path.resolve('./app'),
+      'node_modules'
+    ]
+  },
   module: {
     loaders: [
       {
@@ -15,7 +23,8 @@ module.exports = {
         exclude: /(node_modules|bower_components)/,
         loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'react']
+          plugins: ['transform-decorators-legacy'],
+          presets: ['es2015', 'stage-0', 'react']
         }
       }
     ]

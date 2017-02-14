@@ -6,8 +6,10 @@
   <body>
     <div id="react-app"></div>
     <script>
+      var todoStore = new Todo.TodoStore();
+
       Todo.ReactDOM.render(
-        Todo.React.createElement(Todo.App),
+          Todo.React.createElement(Todo.App, {store: todoStore}),
         document.getElementById("react-app")
       )
     </script>
