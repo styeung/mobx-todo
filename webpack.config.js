@@ -2,11 +2,14 @@ var path = require('path');
 
 module.exports = {
   context: __dirname + '/app',
-  entry: './index.js',
+  entry: {
+    'app/build/bundle': './index.js',
+    'test/build/bundle': '../test/index.js'
+  },
   output: {
-     path: __dirname + '/build',
+     path: __dirname + '/',
      publicPath: '/assets',
-     filename: 'bundle.js',
+     filename: '[name].js',
      libraryTarget: 'var',
      library: 'Todo',
   },

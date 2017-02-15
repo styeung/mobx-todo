@@ -4,6 +4,10 @@
   "main": "index.js",
   "repository": {},
   "license": "MIT",
+  "scripts": {
+    "build": "webpack --progress",
+    "watch": "webpack --watch --progress"
+  },
   "dependencies": {
     "babel-core": "^6.23.1",
     "babel-loader": "^6.3.0",
@@ -17,5 +21,8 @@
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "webpack": "^2.2.1"
+  },
+  "devDependencies": {
+    "react-addons-test-utils": "^15.4.2"
   }
 }

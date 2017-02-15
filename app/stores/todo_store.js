@@ -1,10 +1,10 @@
 import {observable} from 'mobx';
 
 class TodoStore {
-  @observable todos = ['default 1', 'default 2'];
+  @observable todos = [];
 
   addTodo(task) {
-   this.todos.push('something');
+    this.todos.push(task);
   }
 }
 
