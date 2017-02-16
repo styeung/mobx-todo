@@ -8,12 +8,22 @@ class App extends React.Component {
     super(props);
 
     this.addTodo = this.addTodo.bind(this);
+    this.removeTodo = this.removeTodo.bind(this);
   }
 
   todos() {
     const todos = _.get(this.props, 'store.todos', []);
-    return _.map(todos, (toDo, index) => {
-      return (<li data-test="item" key={index}>{toDo}</li>);
+    return _.map(todos, (toDo) => {
+      return (
+        <li key={toDo.id} data-item-id={toDo.id}>
+          <span data-test="item">
+            {toDo.content}
+          </span>
+          <button data-test="delete-button" onClick={this.removeTodo}>
+            Delete
+          </button>
+        </li>
+      );
     });
   }
 
@@ -21,6 +31,11 @@ class App extends React.Component {
     e.preventDefault();
     const item = e.target.elements[0].value;
     this.props.store.addTodo(item);
+  }
+
+  removeTodo(e) {
+    const id = parseInt(e.target.parentNode.getAttribute('data-item-id'));
+    this.props.store.removeTodo(id);
   }
 
   render() {
