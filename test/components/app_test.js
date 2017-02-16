@@ -1,4 +1,5 @@
 import React from 'react';
+import { observable } from 'mobx';
 import { renderIntoDocument, Simulate } from 'react-addons-test-utils';
 import { findDOMNode } from 'react-dom';
 import _ from 'lodash';
@@ -8,10 +9,28 @@ describe('App', () => {
   let store;
 
   beforeEach(() => {
-    store = {
+    store = observable({
       todos: [],
       addTodo: jasmine.createSpy()
+    });
+  });
+
+  it('is an observer of todos', () => {
+    const component = renderIntoDocument(<App store={store}/>);
+    const domElement = findDOMNode(component);
+
+    const items = () => {
+      return domElement.querySelectorAll('[data-test="item"]');
     };
+
+    expect(items().length).toEqual(0);
+
+    component.props.store.todos = ['item'];
+
+    const itemText = _.map(items(), (item) => {
+      return item.textContent;
+    });
+    expect(itemText).toEqual(['item']);
   });
 
   it('displays the list of todos from the store prop', () => {
