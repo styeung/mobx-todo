@@ -1,7 +1,8 @@
-import App from 'components/app.js';
 import React from 'react';
 import { renderIntoDocument, Simulate } from 'react-addons-test-utils';
 import { findDOMNode } from 'react-dom';
+import _ from 'lodash';
+import App from 'components/app.js';
 
 describe('App', () => {
   let store;
@@ -13,10 +14,16 @@ describe('App', () => {
     };
   });
 
-  it('displays Hello World', () => {
+  it('displays the list of todos from the store prop', () => {
+    store.todos = ['first item', 'second item'];
     const component = renderIntoDocument(<App store={store}/>);
     const domElement = findDOMNode(component);
-    expect(domElement.textContent).toContain('Hello World');
+
+    const items = domElement.querySelectorAll('[data-test="item"]');
+    const itemText = _.map(items, (item) => {
+      return item.textContent;
+    });
+    expect(itemText).toEqual(['first item', 'second item']);
   });
 
   describe('when add item is pressed', () => {

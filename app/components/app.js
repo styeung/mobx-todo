@@ -13,7 +13,7 @@ class App extends React.Component {
   todos() {
     const todos = _.get(this.props, 'store.todos', []);
     return _.map(todos, (toDo, index) => {
-      return (<li key={index}>{toDo}</li>);
+      return (<li data-test="item" key={index}>{toDo}</li>);
     });
   }
 
@@ -26,7 +26,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <div>Hello World</div>
+        <div>Todo List</div>
         <ul>
           {this.todos()}
         </ul>
