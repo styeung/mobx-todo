@@ -20,13 +20,16 @@ describe('App', () => {
   });
 
   describe('when add item is pressed', () => {
-    it('calls addTodo on its store prop', () => {
+    it('calls addTodo on its store prop, passing in the input value', () => {
       const component = renderIntoDocument(<App store={store}/>);
       const domElement = findDOMNode(component);
+      const inputField = domElement.querySelector('[data-test="item-field"]');
 
-      Simulate.click(domElement.querySelector('[data-test="add-item"]'));
+      inputField.value = 'Get rice';
+      Simulate.change(inputField);
+      Simulate.submit(domElement.querySelector('[data-test="item-form"]'));
 
-      expect(store.addTodo).toHaveBeenCalled();
+      expect(store.addTodo).toHaveBeenCalledWith('Get rice');
     });
   });
 });

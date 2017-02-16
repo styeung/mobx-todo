@@ -17,8 +17,10 @@ class App extends React.Component {
     });
   }
 
-  addTodo() {
-    this.props.store.addTodo();
+  addTodo(e) {
+    e.preventDefault();
+    const item = e.target.elements[0].value;
+    this.props.store.addTodo(item);
   }
 
   render() {
@@ -28,9 +30,10 @@ class App extends React.Component {
         <ul>
           {this.todos()}
         </ul>
-        <div data-test="add-item" onClick={this.addTodo}>
-          Add Item
-        </div>
+        <form data-test="item-form" onSubmit={this.addTodo}>
+          <input data-test="item-field" type="text" placeholder="Item here..."/>
+          <input data-test="add-item" type="submit" value="Add Item"/>
+        </form>
       </div>
     );
   }
