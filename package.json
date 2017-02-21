@@ -9,6 +9,7 @@
     "watch": "webpack --watch --progress"
   },
   "dependencies": {
+    "axios": "^0.15.3",
     "babel-core": "^6.23.1",
     "babel-loader": "^6.3.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",

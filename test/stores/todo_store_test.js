@@ -1,13 +1,41 @@
 import TodoStore from 'stores/todo_store.js';
+import axios from 'axios';
 
 describe('TodoStore', () => {
-  let todoStore;
+  let todoStore,
+      promiseHelper;
 
   beforeEach(() => {
-    todoStore = new TodoStore();
+    const fakePromise = new Promise((resolve, reject) => {
+      promiseHelper = {
+        resolve: resolve
+      }
+    });
+
+    spyOn(axios, 'get').and.returnValue(fakePromise);
+  });
+
+  describe('initialization', () => {
+    it('fetches the list of todos from the api', () => {
+      todoStore = new TodoStore();
+      expect(axios.get).toHaveBeenCalledWith('http://localhost:4567/items');
+    });
+
+    it('assigns the response from the api to the store todos', (done) => {
+      todoStore = new TodoStore();
+      promiseHelper.resolve({data: 'stuff'});
+
+      _.defer(() => {
+        expect(todoStore.todos).toEqual('stuff');
+        done();
+      });
+    });
   });
 
   describe('addTodo', () => {
+    beforeEach(() => {
+      todoStore = new TodoStore();
+    });
     it('adds the passed in value to the list of todos, assigning a unique id', () => {
       todoStore.addTodo('eat lunch');
       todoStore.addTodo('take a shower');
