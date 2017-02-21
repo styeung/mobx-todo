@@ -3,7 +3,8 @@ import axios from 'axios';
 
 describe('TodoStore', () => {
   let todoStore,
-      promiseHelper;
+      promiseHelper,
+      promisePostHelper;
 
   beforeEach(() => {
     const fakePromise = new Promise((resolve, reject) => {
@@ -12,7 +13,14 @@ describe('TodoStore', () => {
       }
     });
 
+    const fakePostPromise = new Promise((resolve, reject) => {
+      promisePostHelper = {
+        resolve: resolve
+      }
+    });
+
     spyOn(axios, 'get').and.returnValue(fakePromise);
+    spyOn(axios, 'post').and.returnValue(fakePostPromise);
   });
 
   describe('initialization', () => {
@@ -36,19 +44,30 @@ describe('TodoStore', () => {
     beforeEach(() => {
       todoStore = new TodoStore();
     });
-    it('adds the passed in value to the list of todos, assigning a unique id', () => {
+
+    it('makes a post to the api with the id and item', () => {
       todoStore.addTodo('eat lunch');
-      todoStore.addTodo('take a shower');
 
-      const todos = todoStore.todos.slice();
-      expect(todos).toContain(jasmine.objectContaining({content: 'eat lunch'}));
-      expect(todos).toContain(jasmine.objectContaining({content: 'take a shower'}));
+      expect(axios.post).toHaveBeenCalledWith('http://localhost:4567/item', {id: 1, content: 'eat lunch'});
+    });
 
-      const ids = _.map(todos, (todo) => {
-        return todo.id;
+    describe('when post is successful', () => {
+      it('adds the passed in value to the list of todos, assigning a unique id', (done) => {
+        todoStore.addTodo('eat lunch');
+        promisePostHelper.resolve('200');
+
+        _.defer(() => {
+          const todos = todoStore.todos.slice();
+          expect(todos).toContain(jasmine.objectContaining({content: 'eat lunch'}));
+
+          const ids = _.map(todos, (todo) => {
+            return todo.id;
+          });
+
+          expect(_.uniq(ids).length).toEqual(ids.length);
+          done();
+        });
       });
-
-      expect(_.uniq(ids).length).toEqual(ids.length);
     });
   });
 
