@@ -31,24 +31,56 @@ describe('TodoStore', () => {
     spyOn(axios, 'delete').and.returnValue(fakeDeletePromise);
   });
 
-  describe('initialization', () => {
+  describe('.fetchTodos', () => {
     it('fetches the list of todos from the api', () => {
       todoStore = new TodoStore();
+      todoStore.fetchTodos();
       expect(axios.get).toHaveBeenCalledWith('http://localhost:4567/items');
     });
 
-    it('assigns the response from the api to the store todos', (done) => {
-      todoStore = new TodoStore();
-      promiseHelper.resolve({data: 'stuff'});
+    describe('when fetch is successful', () => {
+      it('assigns the response from the api to the store todos', (done) => {
+        todoStore = new TodoStore();
+        todoStore.fetchTodos();
+        promiseHelper.resolve({data: 'stuff'});
 
-      _.defer(() => {
-        expect(todoStore.todos).toEqual('stuff');
-        done();
+        _.defer(() => {
+          expect(todoStore.todos).toEqual('stuff');
+          done();
+        });
+      });
+
+      describe('fetch response is non-empty', () => {
+        it('sets the currentId to the max id of the fetched todos', (done) => {
+          todoStore = new TodoStore();
+          todoStore.fetchTodos();
+
+          promiseHelper.resolve({data: [{id: '1', content: 'number 1'}, {id: '100', content: 'number 100'}]});
+
+          _.defer(() => {
+            expect(todoStore.currentId).toEqual(100);
+            done();
+          });
+        });
+      });
+
+      describe('fetch response is empty', () => {
+        it('sets the currentId to 0', (done) => {
+          todoStore = new TodoStore();
+          todoStore.fetchTodos();
+
+          promiseHelper.resolve({data: []});
+
+          _.defer(() => {
+            expect(todoStore.currentId).toEqual(0);
+            done();
+          });
+        });
       });
     });
   });
 
-  describe('addTodo', () => {
+  describe('.addTodo', () => {
     beforeEach(() => {
       todoStore = new TodoStore();
     });
@@ -79,19 +111,18 @@ describe('TodoStore', () => {
     });
   });
 
-  describe('removeTodo', () => {
-    beforeEach(() => {
-      todoStore = new TodoStore();
-    });
-
+  describe('.removeTodo', () => {
     it('makes a delete to the api with the id', () => {
+      todoStore = new TodoStore();
+
       todoStore.removeTodo('1');
 
       expect(axios.delete).toHaveBeenCalledWith('http://localhost:4567/item/1');
     });
 
     it('removes the todo with the passed in id', (done) => {
-      todoStore.todos = [{id: '1', content: 'do homework'}, {id: '2', content: 'watch tv'}]
+      const defaultTodos = [{id: '1', content: 'do homework'}, {id: '2', content: 'watch tv'}]
+      todoStore = new TodoStore(defaultTodos);
       todoStore.removeTodo('1');
       promiseDeleteHelper.resolve();
 
