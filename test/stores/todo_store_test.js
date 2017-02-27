@@ -4,7 +4,8 @@ import axios from 'axios';
 describe('TodoStore', () => {
   let todoStore,
       promiseHelper,
-      promisePostHelper;
+      promisePostHelper,
+      promiseDeleteHelper;
 
   beforeEach(() => {
     const fakePromise = new Promise((resolve, reject) => {
@@ -19,8 +20,15 @@ describe('TodoStore', () => {
       }
     });
 
+    const fakeDeletePromise = new Promise((resolve, reject) => {
+      promiseDeleteHelper = {
+        resolve: resolve
+      }
+    });
+
     spyOn(axios, 'get').and.returnValue(fakePromise);
     spyOn(axios, 'post').and.returnValue(fakePostPromise);
+    spyOn(axios, 'delete').and.returnValue(fakeDeletePromise);
   });
 
   describe('initialization', () => {
@@ -48,13 +56,13 @@ describe('TodoStore', () => {
     it('makes a post to the api with the id and item', () => {
       todoStore.addTodo('eat lunch');
 
-      expect(axios.post).toHaveBeenCalledWith('http://localhost:4567/item', {id: 1, content: 'eat lunch'});
+      expect(axios.post).toHaveBeenCalledWith('http://localhost:4567/item', {id: '1', content: 'eat lunch'});
     });
 
     describe('when post is successful', () => {
       it('adds the passed in value to the list of todos, assigning a unique id', (done) => {
         todoStore.addTodo('eat lunch');
-        promisePostHelper.resolve('200');
+        promisePostHelper.resolve();
 
         _.defer(() => {
           const todos = todoStore.todos.slice();
@@ -72,11 +80,27 @@ describe('TodoStore', () => {
   });
 
   describe('removeTodo', () => {
-    it('removes the todo with the passed in id', () => {
-      todoStore.todos = [{id: 1, content: 'first one'}, {id: 2, content: 'second one'}];
-      todoStore.removeTodo(1);
+    beforeEach(() => {
+      todoStore = new TodoStore();
+    });
 
-      expect(todoStore.todos.slice()).toEqual([{id: 2, content: 'second one'}]);
+    it('makes a delete to the api with the id', () => {
+      todoStore.removeTodo('1');
+
+      expect(axios.delete).toHaveBeenCalledWith('http://localhost:4567/item/1');
+    });
+
+    it('removes the todo with the passed in id', (done) => {
+      todoStore.todos = [{id: '1', content: 'do homework'}, {id: '2', content: 'watch tv'}]
+      todoStore.removeTodo('1');
+      promiseDeleteHelper.resolve();
+
+      _.defer(() => {
+        const todos = todoStore.todos.slice();
+        expect(todos).not.toContain(jasmine.objectContaining({content: 'do homework'}));
+
+        done();
+      });
     });
   });
 });

@@ -17,15 +17,17 @@ class TodoStore {
 
   addTodo(task) {
     this.increment++;
-    const newTask = {id: this.increment, content: task};
+    const newTask = {id: String(this.increment), content: task};
     axios.post(apiDomain + '/item', newTask).then(() => {
       this.todos.push(newTask);
     });
   }
 
   removeTodo(id) {
-    _.remove(this.todos, (todo) => {
-      return todo.id === id;
+    axios.delete(apiDomain + `/item/${id}`).then(() => {
+      _.remove(this.todos, (todo) => {
+        return todo.id === id;
+      });
     });
   }
 }

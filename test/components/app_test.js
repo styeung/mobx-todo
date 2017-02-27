@@ -24,13 +24,17 @@ describe('App', () => {
       return domElement.querySelectorAll('[data-test="item"]');
     };
 
+    // Assert that there are no items to start with
     expect(items().length).toEqual(0);
 
+    // Upon updating an observed property
     component.props.store.todos = [{id: 1, content: 'item'}];
 
     const itemText = _.map(items(), (item) => {
       return item.textContent;
     });
+
+    // Assert that there are now items on the page
     expect(itemText).toEqual(['item']);
   });
 
@@ -62,7 +66,7 @@ describe('App', () => {
 
   describe('when delete button is clicked for an item', () => {
     it('calls removeTodo on its store prop, passing in the item id', () => {
-      store.todos = [{id: 1, content: 'first item'}, {id: 2, content: 'second item'}];
+      store.todos = [{id: '1', content: 'first item'}, {id: '2', content: 'second item'}];
       const component = renderIntoDocument(<App store={store}/>);
       const domElement = findDOMNode(component);
 
@@ -71,7 +75,7 @@ describe('App', () => {
 
       Simulate.click(deleteButton);
 
-      expect(store.removeTodo).toHaveBeenCalledWith(1);
+      expect(store.removeTodo).toHaveBeenCalledWith('1');
     });
   });
 });

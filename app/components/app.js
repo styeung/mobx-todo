@@ -34,7 +34,7 @@ class App extends React.Component {
   }
 
   removeTodo(e) {
-    const id = parseInt(e.target.parentNode.getAttribute('data-item-id'));
+    const id = e.target.parentNode.getAttribute('data-item-id');
     this.props.store.removeTodo(id);
   }
 
