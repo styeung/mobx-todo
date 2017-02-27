@@ -1,5 +1,5 @@
 import React from 'react';
-import { observable } from 'mobx';
+import { observable, useStrict } from 'mobx';
 import { renderIntoDocument, Simulate } from 'react-addons-test-utils';
 import { findDOMNode } from 'react-dom';
 import _ from 'lodash';
@@ -9,10 +9,14 @@ describe('App', () => {
   let store;
 
   beforeEach(() => {
+    //turn off strict mode when testing with mock store
+    useStrict(false);
+
     store = observable({
       todos: [],
       addTodo: jasmine.createSpy(),
-      removeTodo: jasmine.createSpy()
+      removeTodo: jasmine.createSpy(),
+      fetchTodos: jasmine.createSpy()
     });
   });
 
@@ -48,6 +52,13 @@ describe('App', () => {
       return item.textContent;
     });
     expect(itemText).toEqual(['first item', 'second item']);
+  });
+
+  describe('on mount', () => {
+    it('calls fetchTodos from its store prop', () => {
+      const component = renderIntoDocument(<App store={store}/>);
+      expect(store.fetchTodos).toHaveBeenCalled();
+    });
   });
 
   describe('when add item is pressed', () => {

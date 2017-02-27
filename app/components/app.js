@@ -11,6 +11,21 @@ class App extends React.Component {
     this.removeTodo = this.removeTodo.bind(this);
   }
 
+  componentDidMount() {
+    this.props.store.fetchTodos();
+  }
+
+  addTodo(e) {
+    e.preventDefault();
+    const item = e.target.elements[0].value;
+    this.props.store.addTodo(item);
+  }
+
+  removeTodo(e) {
+    const id = e.target.parentNode.getAttribute('data-item-id');
+    this.props.store.removeTodo(id);
+  }
+
   todos() {
     const todos = _.get(this.props, 'store.todos', []);
     return _.map(todos, (toDo) => {
@@ -25,17 +40,6 @@ class App extends React.Component {
         </li>
       );
     });
-  }
-
-  addTodo(e) {
-    e.preventDefault();
-    const item = e.target.elements[0].value;
-    this.props.store.addTodo(item);
-  }
-
-  removeTodo(e) {
-    const id = e.target.parentNode.getAttribute('data-item-id');
-    this.props.store.removeTodo(id);
   }
 
   render() {
