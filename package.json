@@ -5,6 +5,7 @@
   "repository": {},
   "license": "MIT",
   "scripts": {
+    "dev-server": "webpack-dev-server",
     "build": "webpack --progress",
     "watch": "webpack --watch --progress"
   },
@@ -24,6 +25,7 @@
     "webpack": "^2.2.1"
   },
   "devDependencies": {
-    "react-addons-test-utils": "^15.4.2"
+    "react-addons-test-utils": "^15.4.2",
+    "webpack-dev-server": "^2.4.1"
   }
 }
